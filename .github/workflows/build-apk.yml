@@ -1,0 +1,36 @@
+name: Build Free Fire Gaming Assistant
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract Android project
+        run: |
+          mkdir -p source
+          ZIP_FILE=$(find . -maxdepth 1 -name '*.zip' | head -1)
+          test -n "$ZIP_FILE"
+          unzip -q "$ZIP_FILE" -d source
+          PROJECT=$(find source -name "settings.gradle*" -printf '%h\n' | head -1)
+          test -n "$PROJECT"
+          echo "PROJECT_DIR=$
